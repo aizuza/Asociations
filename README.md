@@ -1,2 +1,2 @@
-# Asociations
-sql to mysql
+# game-tracker
+games
