@@ -24,13 +24,25 @@ module.exports = {
 
 const { Student } = require('./../models/student'); // cargando el modelo
 const { Group } = require('./../models/group'); // cargando el modelo
+const { Documentation } = require('./../models/documentation');
+const { Project } = require('./../models/project');
+
 
 //Association
+//one to one
+Student.hasOne(Documentation);
+
 //One-to-many
 Group.hasMany(Student);
 Student.belongsTo(Group);
 
-//sequelize.sync(); // sincroniza los modelos a la base de datos
+//Many-to-many
+Student.belongsToMany(Project, { through: 'StudentProject' });
+Project.belongsToMany(Student, { through: 'StudentProject' });
+
+
+
+sequelize.sync(); // sincroniza los modelos a la base de datos
 
 //Callback -> Promise -> async/await
 (async() => {
@@ -79,5 +91,56 @@ Student.belongsTo(Group);
     //});
     //benji.name = 'Benji';
     //await benji.save();
+
+    //Delete Student
+
+    // let erick = await Student.findOne({
+    //     where: {
+    //         name: 'Erick'
+    //     }
+    // })
+
+    // await erick.destroy();
+
+    //Create and "link" one-to-one
+
+    // let benji = await Student.findOne({
+    //     where: {
+    //         name: 'benji'
+    //     }
+    // });
+
+    // let benjisDocumentation = await Documentation.create({
+    //     name: 'Benji Documentation'
+    // });
+
+    // benji.setDocumentation(benjisDocumentation);
+    // await benji.save();
+
+
+    //Create and assign a Project
+
+    let pr1 = await Project.create({
+        name: 'Proyecto Parcial 1'
+    });
+
+    let pr2 = await Project.create({
+        name: 'Proyecto Parcial 2'
+    });
+
+    let benji = await Student.findOne({
+        where: {
+            name: 'Benji'
+        }
+    });
+
+    let pedro = await Student.findOne({
+        where: {
+            name: 'Pedro'
+        }
+    });
+
+    pr1.setStudents([benji, pedro]);
+
 
 })();
